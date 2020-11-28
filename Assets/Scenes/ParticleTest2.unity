@@ -140,6 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 1, b: 1, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!1 &273377849
 GameObject:
@@ -207,7 +208,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _waveSpeed: 3
-  _waveWidth: 2
+  _waveWidthMultiplier: 0.5
 --- !u!4 &273377851
 Transform:
   m_ObjectHideFlags: 0
@@ -325,6 +326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 1, b: 1, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!1 &495355064 stripped
 GameObject:
@@ -345,6 +347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 1, b: 1, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!1 &705507993
 GameObject:
@@ -10029,6 +10032,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 0, g: 0, b: 0, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!1 &923431680
 GameObject:
@@ -10301,6 +10305,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 1, b: 1, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!1 &1195343303 stripped
 GameObject:
@@ -10321,6 +10326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 1, b: 1, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!1001 &1267023095
 PrefabInstance:
@@ -15351,6 +15357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 0, b: 0, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!4 &1517616125
 Transform:
@@ -15385,6 +15392,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 1, b: 1, a: 1}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!1001 &1593088921
 PrefabInstance:
@@ -15602,6 +15610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 0, b: 0, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!1 &1692658454
 GameObject:
@@ -15652,6 +15661,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 1, b: 1, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!1 &1948797554
 GameObject:
@@ -20610,6 +20620,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _colorOverride: {r: 1, g: 0, b: 0, a: 0}
+  _densityMultiplier: 1
   _pointCount: 0
 --- !u!4 &2122580767
 Transform:

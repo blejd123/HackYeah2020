@@ -8,11 +8,11 @@ public class ParticleSpawnerGlobalSettings : MonoBehaviour
     [SerializeField] private ParticleSystem _particleSystem;
     [SerializeField] private AnimationCurve _animationCurve;
     [SerializeField] private float _waveSpeed;
-    [SerializeField] private float _waveWidth;
+    [SerializeField] private float _waveWidthMultiplier;
 
     public float Density => _density;
     public ParticleSystem ParticleSystem => _particleSystem;
     public AnimationCurve AnimationCurve => _animationCurve;
     public float WaveSpeed => _waveSpeed;
-    public float WaveWidth => _waveWidth;
+    public float WaveWidthMultiplier => _waveWidthMultiplier;
 }

@@ -105,7 +105,7 @@ public class ParticleSpawner : MonoBehaviour
         var particles = new ParticleSystem.Particle[particleCount];
 
         var animationCurve = _particleSpawnerGlobalSettings.AnimationCurve;
-        var waveWidth = _particleSpawnerGlobalSettings.WaveWidth;
+        var waveWidth = range * _particleSpawnerGlobalSettings.WaveWidthMultiplier;
         var waveSpeed = _particleSpawnerGlobalSettings.WaveSpeed;
         var distance = range + waveWidth;
         var spawningDuration = distance / waveSpeed;
