@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using UnityEngine;
@@ -10,10 +11,10 @@ using Vector3 = UnityEngine.Vector3;
 
 public class ParticleSpawner : MonoBehaviour
 {
+    [SerializeField] private Color _colorOverride = Color.white;
+    [SerializeField] private float _densityMultiplier = 1.0f;
+
     [SerializeField] private int _pointCount;
-    [SerializeField] private ParticleSystem _particleSystem;
-    [SerializeField] private Color _color;
-    [SerializeField] private AnimationCurve _animationCurve;
 
     private List<Vector3> _points;
     private float[] _sizes;
@@ -22,6 +23,7 @@ public class ParticleSpawner : MonoBehaviour
     private List<Vector3> _pointNormals;
     private List<Color32> _pointColors;
     private Camera _camera;
+    private ParticleSpawnerGlobalSettings _particleSpawnerGlobalSettings;
 
     private class PointData
     {
@@ -39,8 +41,8 @@ public class ParticleSpawner : MonoBehaviour
 
     private void Start()
     {
+        _particleSpawnerGlobalSettings = FindObjectOfType<ParticleSpawnerGlobalSettings>();
         _camera = Camera.main;
-        var meshRenderer = GetComponentInChildren<MeshRenderer>();
         var meshfilter = GetComponentInChildren<MeshFilter>();
         var mesh = meshfilter.sharedMesh;
         var vertices = mesh.vertices;
@@ -58,11 +60,14 @@ public class ParticleSpawner : MonoBehaviour
             _sizesSums[i] = _totalSize;
         }
 
+        var lossyScale = meshfilter.transform.lossyScale;
+        var pointCount = (int)(_densityMultiplier * _particleSpawnerGlobalSettings.Density * _totalSize * lossyScale.x * lossyScale.y * lossyScale.z);
+        _pointCount = pointCount;
         var m = transform.localToWorldMatrix;
-        _points = new List<Vector3>(_pointCount);
-        _pointNormals = new List<Vector3>(_pointCount);
-        _pointColors = new List<Color32>(_pointCount);
-        for (int i = 0; i < _pointCount; i++)
+        _points = new List<Vector3>(pointCount);
+        _pointNormals = new List<Vector3>(pointCount);
+        _pointColors = new List<Color32>(pointCount);
+        for (int i = 0; i < pointCount; i++)
         {
             var data = GetRandomPointOnSurface(vertices, triangles, normals, colors);
             _points.Add(m.MultiplyPoint(data.Position));
@@ -99,18 +104,23 @@ public class ParticleSpawner : MonoBehaviour
         var particleCount = pointsInRange.Count;
         var particles = new ParticleSystem.Particle[particleCount];
 
-        var spawningDuration = 3.0f;
-        var main = _particleSystem.main;
+        var animationCurve = _particleSpawnerGlobalSettings.AnimationCurve;
+        var waveWidth = _particleSpawnerGlobalSettings.WaveWidth;
+        var waveSpeed = _particleSpawnerGlobalSettings.WaveSpeed;
+        var distance = range + waveWidth;
+        var spawningDuration = distance / waveSpeed;
+        var particleSystem = Instantiate(_particleSpawnerGlobalSettings.ParticleSystem);
+        particleSystem.transform.position = transform.position;
+        var main = particleSystem.main;
         main.maxParticles = particleCount;
         main.startLifetime = spawningDuration;
-        var frames = Mathf.FloorToInt(spawningDuration / Time.fixedDeltaTime);
 
         Profiler.BeginSample("Emit");
-        _particleSystem.Emit(particleCount);
+        particleSystem.Emit(particleCount);
         Profiler.EndSample();
 
         Profiler.BeginSample("GetParticles");
-        _particleSystem.GetParticles(particles);
+        particleSystem.GetParticles(particles);
         Profiler.EndSample();
 
         Profiler.BeginSample("InitParticles");
@@ -123,28 +133,26 @@ public class ParticleSpawner : MonoBehaviour
         Profiler.EndSample();
 
         Profiler.BeginSample("SetParticles");
-        _particleSystem.SetParticles(particles, particleCount);
+        particleSystem.SetParticles(particles, particleCount);
         Profiler.EndSample();
-
-        var peakWidth = 2.5f;
-        var start = -peakWidth;
-        var peakStart = -peakWidth;
+        
+        var start = -waveWidth;
+        var peakStart = -waveWidth;
         var peakEnd = 0.0f;
-        var distance = range + peakWidth;
         var duration = 0.0f;
         var posOffset = 0.01f;
 
         while (duration <= spawningDuration)
         {
             peakStart = start + distance * (duration/ spawningDuration);
-            peakEnd = peakStart + peakWidth;
+            peakEnd = peakStart + waveWidth;
 
             Profiler.BeginSample("UpdateParticles");
             for (int j = 0; j < particleCount; j++)
             {
                 var v = pointsInRange[j];
                 var dist = (v - hitPos).magnitude;
-                var alpha = dist < peakStart || dist > peakEnd ? 0 : Mathf.RoundToInt(_animationCurve.Evaluate((dist - peakStart) / peakWidth) * 255);
+                var alpha = dist < peakStart || dist > peakEnd ? 0 : Mathf.RoundToInt(animationCurve.Evaluate((dist - peakStart) / waveWidth) * 255);
                 var c = colorsInRange[j];
                 c.a = (byte) alpha;
                 particles[j].startColor = c;
@@ -153,12 +161,14 @@ public class ParticleSpawner : MonoBehaviour
             Profiler.EndSample();
 
             Profiler.BeginSample("SetParticles Inner");
-            _particleSystem.SetParticles(particles, particleCount);
+            particleSystem.SetParticles(particles, particleCount);
             Profiler.EndSample();
 
             duration += Time.deltaTime;
             yield return null;
         }
+
+        Destroy(particleSystem.gameObject);
     }
 
     private PointData GetRandomPointOnSurface(Vector3[] vertices, int[] triangles, Vector3[] normals, Color32[] colors)
@@ -189,7 +199,7 @@ public class ParticleSpawner : MonoBehaviour
         var n1 = normals[triangles[triangleIndex * 3 + 1]];
         var n2 = normals[triangles[triangleIndex * 3 + 2]];
 
-        Color32 color = Color.white;
+        Color32 color = _colorOverride;
         if (colors != null && colors.Length > 0)
         {
             var c0 = colors[triangles[triangleIndex * 3]];
