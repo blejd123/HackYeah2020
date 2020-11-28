@@ -33,10 +33,24 @@ public class ParticleSpawner : MonoBehaviour
 
         var b0 = meshData.Bounds.size;
         var b1 = meshRenderer.bounds.size;
-        var v0 = Mathf.Max(b0.x, 0.01f) * Mathf.Max(b0.y, 0.01f) * Mathf.Max(b0.z, 0.01f);
-        var v1 = Mathf.Max(b1.x, 0.01f) * Mathf.Max(b1.y, 0.01f) * Mathf.Max(b1.z, 0.01f);
+        var max0 = Mathf.Max(b0.x, b0.y, b0.z);
+        var max1 = Mathf.Max(b1.x, b1.y, b1.z);
+        var v0 = max0 * max0;// Mathf.Max(b0.x, 0.01f) * Mathf.Max(b0.y, 0.01f) * Mathf.Max(b0.z, 0.01f);
+        var v1 = max1 * max1;// Mathf.Max(b1.x, 0.01f) * Mathf.Max(b1.y, 0.01f) * Mathf.Max(b1.z, 0.01f);
         var s = v1 / v0;
-        var pointCount = (int)(_densityMultiplier * _particleSpawnerGlobalSettings.Density * meshData.TotalSize * s);
+        var s2 = (meshData.TotalSize / v0) * v1;
+        //Debug.Log("S " + s);
+        //Debug.Log("S2 " + s2);
+        var pointCount = (int)(_densityMultiplier * _particleSpawnerGlobalSettings.Density * s2);
+        //Debug.Log("POINT COUNT " + pointCount);
+        //if (pointCount > 1000000)
+        //{
+        //    int x = 10;
+        //}
+        //if (pointCount > 1000)
+        //{
+        //    pointCount = 1000;
+        //}
         _pointCount = pointCount;
         var m = transform.localToWorldMatrix;
         Profiler.BeginSample("InitArrays");
