@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 3b1ae0244364993468d091ff161077c3
+  - enabled: 1
+    path: Assets/Scenes/Gameplay.unity
+    guid: 73552cf256d94c5478ec966fbe912e85
+  - enabled: 1
     path: Assets/Scenes/ParticleTest2.unity
     guid: b88878ea3f75d754789825f062d5ba98
   m_configObjects: {}
