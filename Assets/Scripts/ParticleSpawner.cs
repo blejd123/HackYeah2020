@@ -17,63 +17,43 @@ public class ParticleSpawner : MonoBehaviour
     [SerializeField] private int _pointCount;
 
     private List<Vector3> _points;
-    private float[] _sizes;
-    private float[] _sizesSums;
-    private float _totalSize;
     private List<Vector3> _pointNormals;
     private List<Color32> _pointColors;
     private Camera _camera;
     private ParticleSpawnerGlobalSettings _particleSpawnerGlobalSettings;
 
-    private class PointData
-    {
-        public Vector3 Position;
-        public Vector3 Normal;
-        public Color32 Color;
-
-        public PointData(Vector3 position, Vector3 normal, Color32 color)
-        {
-            Position = position;
-            Normal = normal;
-            Color = color;
-        }
-    }
-
     private void Start()
     {
         _particleSpawnerGlobalSettings = FindObjectOfType<ParticleSpawnerGlobalSettings>();
         _camera = Camera.main;
+        var meshRenderer = GetComponentInChildren<MeshRenderer>();
         var meshfilter = GetComponentInChildren<MeshFilter>();
         var mesh = meshfilter.sharedMesh;
-        var vertices = mesh.vertices;
-        var triangles = mesh.triangles;
-        var normals = mesh.normals;
-        var colors = mesh.colors32;
+        var meshData = _particleSpawnerGlobalSettings.RegisterMesh(mesh);
 
-        _sizes = GenerateTriangleSizes(vertices, triangles);
-        _sizesSums = new float[_sizes.Length];
-
-        _totalSize = 0.0f;
-        for (int i = 0; i < _sizesSums.Length; i++)
-        {
-            _totalSize += _sizes[i];
-            _sizesSums[i] = _totalSize;
-        }
-
-        var lossyScale = meshfilter.transform.lossyScale;
-        var pointCount = (int)(_densityMultiplier * _particleSpawnerGlobalSettings.Density * _totalSize * lossyScale.x * lossyScale.y * lossyScale.z);
+        var b0 = meshData.Bounds.size;
+        var b1 = meshRenderer.bounds.size;
+        var v0 = Mathf.Max(b0.x, 0.01f) * Mathf.Max(b0.y, 0.01f) * Mathf.Max(b0.z, 0.01f);
+        var v1 = Mathf.Max(b1.x, 0.01f) * Mathf.Max(b1.y, 0.01f) * Mathf.Max(b1.z, 0.01f);
+        var s = v1 / v0;
+        var pointCount = (int)(_densityMultiplier * _particleSpawnerGlobalSettings.Density * meshData.TotalSize * s);
         _pointCount = pointCount;
         var m = transform.localToWorldMatrix;
+        Profiler.BeginSample("InitArrays");
         _points = new List<Vector3>(pointCount);
         _pointNormals = new List<Vector3>(pointCount);
         _pointColors = new List<Color32>(pointCount);
+        Profiler.EndSample();
+
+        Profiler.BeginSample("GetRandomPoints");
         for (int i = 0; i < pointCount; i++)
         {
-            var data = GetRandomPointOnSurface(vertices, triangles, normals, colors);
+            var data = meshData.GetRandomPointOnSurface(_colorOverride);
             _points.Add(m.MultiplyPoint(data.Position));
             _pointNormals.Add(m.MultiplyVector(data.Normal).normalized);
             _pointColors.Add(data.Color);
         }
+        Profiler.EndSample();
     }
 
     public void Burst(float duration, float normalizedDensity, Color32? customColor)
@@ -221,68 +201,5 @@ public class ParticleSpawner : MonoBehaviour
 
         yield return new WaitForSeconds(duration);
         Destroy(particleSystem.gameObject);
-    }
-
-    private PointData GetRandomPointOnSurface(Vector3[] vertices, int[] triangles, Vector3[] normals, Color32[] colors)
-    {
-        int triangleIndex = 0;
-        var r = Random.value * _totalSize;
-        for (int i = 0; i < _sizesSums.Length; i++)
-        {
-            if (r <= _sizesSums[i])
-            {
-                triangleIndex = i;
-                break;
-            }
-        }
-
-        var p0 = vertices[triangles[triangleIndex * 3]];
-        var p1 = vertices[triangles[triangleIndex * 3 + 1]];
-        var p2 = vertices[triangles[triangleIndex * 3 + 2]];
-        var a = Random.value;
-        var b = Random.value;
-        if (a + b >= 1.0f)
-        {
-            a = 1 - a;
-            b = 1 - b;
-        }
-
-        var n0 = normals[triangles[triangleIndex * 3]];
-        var n1 = normals[triangles[triangleIndex * 3 + 1]];
-        var n2 = normals[triangles[triangleIndex * 3 + 2]];
-
-        Color32 color = _colorOverride;
-        if (colors != null && colors.Length > 0)
-        {
-            var c0 = colors[triangles[triangleIndex * 3]];
-            var c1 = colors[triangles[triangleIndex * 3 + 1]];
-            var c2 = colors[triangles[triangleIndex * 3 + 2]];
-            color = new Color32((byte)((c0.r + c1.r + c2.r) / 3), (byte)((c0.g + c1.g + c2.g) / 3), (byte)((c0.b + c1.b + c2.b) / 3), (byte)((c0.a + c1.a + c2.a) / 3));
-        }
-
-        var pos = p0 + a * (p1 - p0) + b * (p2 - p0);
-        var normal = (n0 + n1 + n2) / 3.0f;
-        
-        return new PointData(pos, normal, color);
-    }
-
-    private float[] GenerateTriangleSizes(Vector3[] vertexes, int[] triangles)
-    {
-        var triangleCount = triangles.Length / 3;
-        var sizes = new float[triangleCount];
-
-        for (int i = 0; i < triangleCount; i++)
-        {
-            var p0 = vertexes[triangles[i * 3]];
-            var p1 = vertexes[triangles[i * 3 + 1]];
-            var p2 = vertexes[triangles[i * 3 + 2]];
-            var a = (p1 - p0).magnitude;
-            var b = (p2 - p1).magnitude;
-            var c = (p2 - p0).magnitude;
-            var p = 0.5f * (a + b + c);
-            sizes[i] = Mathf.Sqrt(p * (p - a) * (p - b) * (p - c));
-        }
-
-        return sizes;
     }
 }
