@@ -22,6 +22,8 @@
         [SerializeField] private Transform mainCamera;
         [SerializeField] private InputController input;
 
+        [SerializeField] private float _footstepSoundRange;
+
         private CharacterController controller;
 
         private Vector3 movementDirection = Vector3.zero;
@@ -128,6 +130,7 @@
                 var gameObj = Instantiate(stepPrefab, raycastHit.point, Quaternion.identity);
                 gameObj.SetActive(true);
                 OnFootstep?.Invoke(raycastHit.point);
+                HitDetectorUtilities.DetectHit(raycastHit.point, _footstepSoundRange);
             }
         }
     }

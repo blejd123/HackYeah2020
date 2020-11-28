@@ -8,6 +8,7 @@
         [SerializeField] private Transform head;
         [SerializeField] private GameObject particles;
         [SerializeField] private Animator animator;
+        [SerializeField] private float _hitSoundRange;
 
         private void Update()
         {
@@ -15,6 +16,11 @@
             {
                 animator.SetTrigger("Use");
             }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            HitDetectorUtilities.DetectHit(collision.GetContact(0).point, _hitSoundRange);
         }
     }
 }
