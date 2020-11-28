@@ -76,6 +76,11 @@ public class ParticleSpawner : MonoBehaviour
         }
     }
 
+    public void Burst(float duration, float normalizedDensity, Color32? customColor)
+    {
+        StartCoroutine(BurstCoroutine(duration, normalizedDensity, customColor));
+    }
+
     public void Wave(Vector3 hitPos, float range)
     {
         StartCoroutine(WaveCoroutine(hitPos, range));
@@ -109,7 +114,7 @@ public class ParticleSpawner : MonoBehaviour
         var waveSpeed = _particleSpawnerGlobalSettings.WaveSpeed;
         var distance = range + waveWidth;
         var spawningDuration = distance / waveSpeed;
-        var particleSystem = Instantiate(_particleSpawnerGlobalSettings.ParticleSystem);
+        var particleSystem = Instantiate(_particleSpawnerGlobalSettings.WaveParticleSystem);
         particleSystem.transform.position = transform.position;
         var main = particleSystem.main;
         main.maxParticles = particleCount;
@@ -168,6 +173,53 @@ public class ParticleSpawner : MonoBehaviour
             yield return null;
         }
 
+        Destroy(particleSystem.gameObject);
+    }
+
+    private IEnumerator BurstCoroutine(float duration, float normalizedDensity, Color32? customColor)
+    {
+        var pointCount = Mathf.FloorToInt(_points.Count * Mathf.Clamp01(normalizedDensity));
+        var pointsInRange = new List<Vector3>(pointCount);
+        var colorsInRange = new List<Color32>(pointCount);
+        var posOffset = 0.01f;
+
+        for (int i = 0; i < pointCount; i++)
+        {
+            var point = _points[i];
+            pointsInRange.Add(point + _pointNormals[i] * posOffset);
+            colorsInRange.Add(customColor != null ? customColor.Value : _pointColors[i]);
+        }
+
+        Profiler.EndSample();
+        var particleCount = pointsInRange.Count;
+        var particles = new ParticleSystem.Particle[particleCount];
+        var particleSystem = Instantiate(_particleSpawnerGlobalSettings.BurstParticleSystem);
+        particleSystem.transform.position = transform.position;
+        var main = particleSystem.main;
+        main.maxParticles = particleCount;
+        main.startLifetime = duration;
+
+        Profiler.BeginSample("Emit");
+        particleSystem.Emit(particleCount);
+        Profiler.EndSample();
+
+        Profiler.BeginSample("GetParticles");
+        particleSystem.GetParticles(particles);
+        Profiler.EndSample();
+
+        Profiler.BeginSample("InitParticles");
+        for (int i = 0; i < particleCount; i++)
+        {
+            particles[i].position = pointsInRange[i];
+            particles[i].startColor = colorsInRange[i];
+        }
+        Profiler.EndSample();
+
+        Profiler.BeginSample("SetParticles");
+        particleSystem.SetParticles(particles, particleCount);
+        Profiler.EndSample();
+
+        yield return new WaitForSeconds(duration);
         Destroy(particleSystem.gameObject);
     }
 
