@@ -1,30 +1,52 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.Profiling;
+using Random = UnityEngine.Random;
+using Vector3 = UnityEngine.Vector3;
 
 public class ParticleSpawner : MonoBehaviour
 {
     [SerializeField] private int _pointCount;
     [SerializeField] private ParticleSystem _particleSystem;
-    //[SerializeField] private int _particleCount;
     [SerializeField] private Color _color;
     [SerializeField] private AnimationCurve _animationCurve;
 
     private List<Vector3> _points;
-    //private ParticleSystem.Particle[] _particles;
     private float[] _sizes;
     private float[] _sizesSums;
     private float _totalSize;
+    private List<Vector3> _pointNormals;
+    private List<Color32> _pointColors;
+    private Camera _camera;
+
+    private class PointData
+    {
+        public Vector3 Position;
+        public Vector3 Normal;
+        public Color32 Color;
+
+        public PointData(Vector3 position, Vector3 normal, Color32 color)
+        {
+            Position = position;
+            Normal = normal;
+            Color = color;
+        }
+    }
 
     private void Start()
     {
+        _camera = Camera.main;
         var meshRenderer = GetComponentInChildren<MeshRenderer>();
         var meshfilter = GetComponentInChildren<MeshFilter>();
         var mesh = meshfilter.sharedMesh;
         var vertices = mesh.vertices;
         var triangles = mesh.triangles;
+        var normals = mesh.normals;
+        var colors = mesh.colors32;
 
         _sizes = GenerateTriangleSizes(vertices, triangles);
         _sizesSums = new float[_sizes.Length];
@@ -38,27 +60,15 @@ public class ParticleSpawner : MonoBehaviour
 
         var m = transform.localToWorldMatrix;
         _points = new List<Vector3>(_pointCount);
+        _pointNormals = new List<Vector3>(_pointCount);
+        _pointColors = new List<Color32>(_pointCount);
         for (int i = 0; i < _pointCount; i++)
         {
-            _points.Add(m.MultiplyPoint(GetRandomPointOnSurface(vertices, triangles)));
+            var data = GetRandomPointOnSurface(vertices, triangles, normals, colors);
+            _points.Add(m.MultiplyPoint(data.Position));
+            _pointNormals.Add(m.MultiplyVector(data.Normal).normalized);
+            _pointColors.Add(data.Color);
         }
-
-        //_particles = new ParticleSystem.Particle[_particleCount];
-        //var main = _particleSystem.main;
-        //main.maxParticles = _particleCount;
-        //_particleSystem.Emit(_particleCount);
-        //_particleSystem.GetParticles(_particles);
-        //for (int i = 0; i < _particleCount; i++)
-        //{
-        //    _particles[i].position = _points[Random.Range(0, _pointCount)];
-        //    //_particles[i].startColor = new Color32(0, 255, 0, 55);
-        //}
-        //_particleSystem.SetParticles(_particles, _particleCount);
-    }
-
-    private void Update()
-    {
-        
     }
 
     public void Wave(Vector3 hitPos, float range)
@@ -69,7 +79,22 @@ public class ParticleSpawner : MonoBehaviour
     private IEnumerator WaveCoroutine(Vector3 hitPos, float range)
     {
         Profiler.BeginSample("FindPointsInRange");
-        var pointsInRange = _points.FindAll(x => (x - hitPos).magnitude <= range);
+
+        var cameraPos = _camera.transform.position;
+        var r2 = range * range;
+        var pointsInRange = new List<Vector3>();
+        var colorsInRange = new List<Color32>();
+
+        for (int i = 0; i < _points.Count; i++)
+        {
+            var point = _points[i];
+            if ((point - hitPos).sqrMagnitude <= r2)// && Vector3.Dot(_pointNormals[i], cameraPos - point) > 0)
+            {
+                pointsInRange.Add(point + _pointNormals[i] * 0.01f);
+                colorsInRange.Add(_pointColors[i]);
+            }
+        }
+        
         Profiler.EndSample();
         var particleCount = pointsInRange.Count;
         var particles = new ParticleSystem.Particle[particleCount];
@@ -92,7 +117,8 @@ public class ParticleSpawner : MonoBehaviour
         for (int i = 0; i < particleCount; i++)
         {
             particles[i].position = pointsInRange[i];
-            particles[i].startColor = new Color32(0, 255, 0, 0);
+            //particles[i].startColor = new Color32(0, 255, 0, 0);
+            particles[i].startColor = colorsInRange[i];
         }
         Profiler.EndSample();
 
@@ -100,12 +126,13 @@ public class ParticleSpawner : MonoBehaviour
         _particleSystem.SetParticles(particles, particleCount);
         Profiler.EndSample();
 
-        var peakWidth = 1.5f;
+        var peakWidth = 2.5f;
         var start = -peakWidth;
         var peakStart = -peakWidth;
         var peakEnd = 0.0f;
         var distance = range + peakWidth;
         var duration = 0.0f;
+        var posOffset = 0.01f;
 
         while (duration <= spawningDuration)
         {
@@ -118,7 +145,10 @@ public class ParticleSpawner : MonoBehaviour
                 var v = pointsInRange[j];
                 var dist = (v - hitPos).magnitude;
                 var alpha = dist < peakStart || dist > peakEnd ? 0 : Mathf.RoundToInt(_animationCurve.Evaluate((dist - peakStart) / peakWidth) * 255);
-                particles[j].startColor = new Color32(0, 255, 0, (byte)alpha);
+                var c = colorsInRange[j];
+                c.a = (byte) alpha;
+                particles[j].startColor = c;
+                //particles[j].position = v + _pointNormals[j] * (posOffset + Mathf.Sin(Time.time * 2.0f * (v.x + v.y + v.z)) * posOffset);
             }
             Profiler.EndSample();
 
@@ -131,7 +161,7 @@ public class ParticleSpawner : MonoBehaviour
         }
     }
 
-    private Vector3 GetRandomPointOnSurface(Vector3[] vertexes, int[] triangles)
+    private PointData GetRandomPointOnSurface(Vector3[] vertices, int[] triangles, Vector3[] normals, Color32[] colors)
     {
         int triangleIndex = 0;
         var r = Random.value * _totalSize;
@@ -144,9 +174,9 @@ public class ParticleSpawner : MonoBehaviour
             }
         }
 
-        var p0 = vertexes[triangles[triangleIndex * 3]];
-        var p1 = vertexes[triangles[triangleIndex * 3 + 1]];
-        var p2 = vertexes[triangles[triangleIndex * 3 + 2]];
+        var p0 = vertices[triangles[triangleIndex * 3]];
+        var p1 = vertices[triangles[triangleIndex * 3 + 1]];
+        var p2 = vertices[triangles[triangleIndex * 3 + 2]];
         var a = Random.value;
         var b = Random.value;
         if (a + b >= 1.0f)
@@ -155,7 +185,23 @@ public class ParticleSpawner : MonoBehaviour
             b = 1 - b;
         }
 
-        return p0 + a * (p1 - p0) + b * (p2 - p0);
+        var n0 = normals[triangles[triangleIndex * 3]];
+        var n1 = normals[triangles[triangleIndex * 3 + 1]];
+        var n2 = normals[triangles[triangleIndex * 3 + 2]];
+
+        Color32 color = Color.white;
+        if (colors != null && colors.Length > 0)
+        {
+            var c0 = colors[triangles[triangleIndex * 3]];
+            var c1 = colors[triangles[triangleIndex * 3 + 1]];
+            var c2 = colors[triangles[triangleIndex * 3 + 2]];
+            color = new Color32((byte)((c0.r + c1.r + c2.r) / 3), (byte)((c0.g + c1.g + c2.g) / 3), (byte)((c0.b + c1.b + c2.b) / 3), (byte)((c0.a + c1.a + c2.a) / 3));
+        }
+
+        var pos = p0 + a * (p1 - p0) + b * (p2 - p0);
+        var normal = (n0 + n1 + n2) / 3.0f;
+        
+        return new PointData(pos, normal, color);
     }
 
     private float[] GenerateTriangleSizes(Vector3[] vertexes, int[] triangles)
