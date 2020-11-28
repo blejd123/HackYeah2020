@@ -90,6 +90,33 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Staff",
+            "id": "4979f0c5-fd9c-4f45-90f7-f106b6e8e471",
+            "actions": [
+                {
+                    "name": "Use",
+                    "type": "Button",
+                    "id": "0863b62d-37e8-4cd3-8b4b-f354ce3fd668",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "25b6e30d-7849-43f0-9b4e-03c0f3f5f8ed",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Use",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

@@ -103,6 +103,33 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Staff"",
+            ""id"": ""4979f0c5-fd9c-4f45-90f7-f106b6e8e471"",
+            ""actions"": [
+                {
+                    ""name"": ""Use"",
+                    ""type"": ""Button"",
+                    ""id"": ""0863b62d-37e8-4cd3-8b4b-f354ce3fd668"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""25b6e30d-7849-43f0-9b4e-03c0f3f5f8ed"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -111,6 +138,9 @@ public class @InputActions : IInputActionCollection, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
+        // Staff
+        m_Staff = asset.FindActionMap("Staff", throwIfNotFound: true);
+        m_Staff_Use = m_Staff.FindAction("Use", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -197,9 +227,46 @@ public class @InputActions : IInputActionCollection, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // Staff
+    private readonly InputActionMap m_Staff;
+    private IStaffActions m_StaffActionsCallbackInterface;
+    private readonly InputAction m_Staff_Use;
+    public struct StaffActions
+    {
+        private @InputActions m_Wrapper;
+        public StaffActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Use => m_Wrapper.m_Staff_Use;
+        public InputActionMap Get() { return m_Wrapper.m_Staff; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(StaffActions set) { return set.Get(); }
+        public void SetCallbacks(IStaffActions instance)
+        {
+            if (m_Wrapper.m_StaffActionsCallbackInterface != null)
+            {
+                @Use.started -= m_Wrapper.m_StaffActionsCallbackInterface.OnUse;
+                @Use.performed -= m_Wrapper.m_StaffActionsCallbackInterface.OnUse;
+                @Use.canceled -= m_Wrapper.m_StaffActionsCallbackInterface.OnUse;
+            }
+            m_Wrapper.m_StaffActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Use.started += instance.OnUse;
+                @Use.performed += instance.OnUse;
+                @Use.canceled += instance.OnUse;
+            }
+        }
+    }
+    public StaffActions @Staff => new StaffActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
+    }
+    public interface IStaffActions
+    {
+        void OnUse(InputAction.CallbackContext context);
     }
 }

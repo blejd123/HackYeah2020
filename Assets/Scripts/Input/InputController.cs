@@ -26,6 +26,17 @@
                 return inputActions.Player.Look.ReadValue<Vector2>();
             }
         }
+        public bool UseStaff
+        {
+            get
+            {
+                if (inputActions == null)
+                {
+                    return false;
+                }
+                return inputActions.Staff.Use.triggered;
+            }
+        }
 
         private InputActions inputActions;
 

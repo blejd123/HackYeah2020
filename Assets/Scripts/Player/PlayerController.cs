@@ -1,11 +1,14 @@
 ﻿namespace HackYeah
 {
+    using System;
     using System.Collections.Generic;
     using UnityEngine;
 
     [RequireComponent(typeof(CharacterController))]
     public sealed class PlayerController : MonoBehaviour
     {
+        public event Action<Vector3> OnFootstep;
+
         [SerializeField] private float playerSpeed = 2.0f;
         [SerializeField] private float gravityValue = -9.81f;
         [SerializeField] private float groundForce;
@@ -13,6 +16,7 @@
 
         [SerializeField] private List<AudioClip> footstepClips;
         [SerializeField] private float stepInterval;
+        [SerializeField] private GameObject stepPrefab;
 
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private Transform mainCamera;
@@ -21,12 +25,12 @@
         private CharacterController controller;
 
         private Vector3 movementDirection = Vector3.zero;
-        private CollisionFlags collisionFlags;
 
         private bool wasGrounded;
 
         private float stepCycle;
         private float nextStep;
+        private bool wasLeft;
 
         private void Start()
         {
@@ -76,26 +80,8 @@
                 movementDirection += Physics.gravity * gravityValue * Time.fixedDeltaTime;
             }
 
-            collisionFlags = controller.Move(movementDirection * Time.fixedDeltaTime);
-
+            controller.Move(movementDirection * Time.fixedDeltaTime);
             WalkCycle(playerSpeed);
-        }
-
-        private void OnControllerColliderHit(ControllerColliderHit hit)
-        {
-            var body = hit.collider.attachedRigidbody;
-
-            if (collisionFlags == CollisionFlags.Below)
-            {
-                return;
-            }
-
-            if (body == null || body.isKinematic)
-            {
-                return;
-            }
-
-            body.AddForceAtPosition(controller.velocity * 0.1f, hit.point, ForceMode.Impulse);
         }
 
         private void WalkCycle(float delta)
@@ -117,12 +103,32 @@
                 return;
             }
 
-            var random = Random.Range(1, footstepClips.Count);
+            var random = UnityEngine.Random.Range(1, footstepClips.Count);
             audioSource.clip = footstepClips[random];
             audioSource.PlayOneShot(audioSource.clip);
 
             footstepClips[random] = footstepClips[0];
             footstepClips[0] = audioSource.clip;
+
+            var position = transform.position;
+            if (wasLeft)
+            {
+                wasLeft = false;
+                position.x += controller.radius * 0.5f;
+            }
+            else
+            {
+                wasLeft = true;
+                position.x -= controller.radius * 0.5f;
+            }
+
+            RaycastHit raycastHit;
+            if (Physics.Raycast(position, Vector3.down, out raycastHit))
+            {
+                var gameObj = Instantiate(stepPrefab, raycastHit.point, Quaternion.identity);
+                gameObj.SetActive(true);
+                OnFootstep?.Invoke(raycastHit.point);
+            }
         }
     }
 }

@@ -30,8 +30,6 @@
             float yRot = input.Look.x * horizontalSpeed;
             float xRot = input.Look.y * verticalSpeed;
 
-            Debug.Log(yRot);
-
             characterTargetRotation *= Quaternion.Euler(0f, yRot, 0f);
             cameraTargetRotation *= Quaternion.Euler(-xRot, 0f, 0f);
 
