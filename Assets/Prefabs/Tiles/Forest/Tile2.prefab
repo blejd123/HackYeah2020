@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!64 &8215677580660008671
+--- !u!64 &578991552508811691
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -13,7 +13,7 @@ MeshCollider:
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: -5263584975708783029, guid: bbe617f0ae1938046b6061a91f0267fc, type: 3}
+  m_Mesh: {fileID: 5588035879793051430, guid: bbe617f0ae1938046b6061a91f0267fc, type: 3}
 --- !u!1 &7957910629453695895
 GameObject:
   m_ObjectHideFlags: 0

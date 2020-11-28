@@ -127,8 +127,6 @@
             RaycastHit raycastHit;
             if (Physics.Raycast(position, Vector3.down, out raycastHit))
             {
-                var gameObj = Instantiate(stepPrefab, raycastHit.point, Quaternion.identity);
-                gameObj.SetActive(true);
                 OnFootstep?.Invoke(raycastHit.point);
                 HitDetectorUtilities.DetectHit(raycastHit.point, _footstepSoundRange);
             }
