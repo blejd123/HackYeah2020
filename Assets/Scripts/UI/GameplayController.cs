@@ -7,6 +7,12 @@ public class GameplayController : MonoBehaviour
     [SerializeField] private Fader _fader;
     [SerializeField] private SceneChanger _sceneChanger;
 
+    public void EndGame()
+    {
+        StopAllCoroutines();
+        StartCoroutine(GoToCity());
+    }
+
     private void Start()
     {
         _fader.FadeInImmediately();
@@ -26,5 +32,11 @@ public class GameplayController : MonoBehaviour
     {
         yield return _fader.FadeIn();
         _sceneChanger.ChangeScene("MainMenu");
+    }
+
+    private IEnumerator GoToCity()
+    {
+        yield return _fader.FadeIn();
+        _sceneChanger.ChangeScene("Gameplay City");
     }
 }
