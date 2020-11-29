@@ -13,6 +13,12 @@ public class GameplayController : MonoBehaviour
         StartCoroutine(GoToCity());
     }
 
+    public void ExitGame()
+    {
+        StopAllCoroutines();
+        StartCoroutine(GoToMainMenu());
+    }
+
     private void Start()
     {
         _fader.FadeInImmediately();

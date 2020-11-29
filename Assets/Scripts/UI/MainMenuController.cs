@@ -16,7 +16,12 @@ public class MainMenuController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.anyKeyDown)
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            StopAllCoroutines();
+            Application.Quit();
+        }
+        else if (Input.anyKeyDown)
         {
             StopAllCoroutines();
             StartCoroutine(GoToGameplay());
