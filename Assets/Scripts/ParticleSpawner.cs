@@ -25,6 +25,10 @@ public class ParticleSpawner : MonoBehaviour
     private void Start()
     {
         _particleSpawnerGlobalSettings = FindObjectOfType<ParticleSpawnerGlobalSettings>();
+        if (_particleSpawnerGlobalSettings == null)
+        {
+            return;
+        }
         _camera = Camera.main;
         var meshRenderer = GetComponentInChildren<MeshRenderer>();
         var meshfilter = GetComponentInChildren<MeshFilter>();

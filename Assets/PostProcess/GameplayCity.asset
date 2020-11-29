@@ -1321,7 +1321,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e6292b2c06870d4495f009f912b9600, type: 3}
-  m_Name: GameplayForest
+  m_Name: GameplayCity
   m_EditorClassIdentifier: 
   settings:
   - {fileID: 6862144941652525688}
@@ -1338,13 +1338,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a79b01ea5641d4aa6daa2e23605641, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1
   intensity:
     overrideState: 1
-    value: 2.02
+    value: 2
   threshold:
     overrideState: 1
     value: 0.5
