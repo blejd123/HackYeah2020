@@ -1,8 +1,17 @@
 fileFormatVersion: 2
-guid: eef545c8fe21e13458ece538407bd5ea
+guid: 7594620fd55045f42be722e9219e8db2
 ModelImporter:
   serializedVersion: 19301
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      74: -4805450742491024743
+    second: Cube.003|Cube.001Action
+  - first:
+      74: 3244617880250996793
+    second: Cube.003|Cube.002Action
+  - first:
+      74: 726223806253194669
+    second: Cube.003|Cube.002Action.001
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -31,12 +40,12 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 1
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.5
+    globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importVisibility: 1
@@ -81,7 +90,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.5
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
