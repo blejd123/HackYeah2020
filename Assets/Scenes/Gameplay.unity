@@ -26068,11 +26068,6 @@ PrefabInstance:
       propertyPath: input
       value: 
       objectReference: {fileID: 966172677}
-    - target: {fileID: 4277576149654627686, guid: 98192df1d433f714f85bd7a2b8b12977,
-        type: 3}
-      propertyPath: _footstepSoundRange
-      value: 4
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 98192df1d433f714f85bd7a2b8b12977, type: 3}
 --- !u!1001 &4951223648480279657

@@ -232,7 +232,7 @@ MonoBehaviour:
   audioSource: {fileID: 4277576149654627684}
   mainCamera: {fileID: 0}
   input: {fileID: 0}
-  _footstepSoundRange: 1.5
+  _footstepSoundRange: 4
 --- !u!143 &4277576149654627687
 CharacterController:
   m_ObjectHideFlags: 0
