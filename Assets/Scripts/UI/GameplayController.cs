@@ -15,11 +15,11 @@ public class GameplayController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            StopAllCoroutines();
-            StartCoroutine(GoToMainMenu());
-        }
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    StopAllCoroutines();
+        //    StartCoroutine(GoToMainMenu());
+        //}
     }
 
     private IEnumerator GoToMainMenu()
