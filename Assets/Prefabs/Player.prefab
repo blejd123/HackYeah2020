@@ -223,9 +223,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   footstepClips:
-  - {fileID: 8300000, guid: 42e65e088b3f4374e851b8dbd38f3df9, type: 3}
-  - {fileID: 8300000, guid: 8bc94ec6ed537e743b481638bdcd503d, type: 3}
-  - {fileID: 8300000, guid: 5a9383dda6cabc047b7a297602e93eb4, type: 3}
+  - {fileID: 8300000, guid: c9a058d6db0e4d44eb931d97e53e113b, type: 3}
+  - {fileID: 8300000, guid: 50d6cd2c27b71984d8eff13ef599563b, type: 3}
+  - {fileID: 8300000, guid: 53f7a12d454e77f4fb48678ed1d242a1, type: 3}
+  - {fileID: 8300000, guid: bddb0fe150bdc2d43885b77125cdf8e9, type: 3}
   stepInterval: 3
   stepPrefab: {fileID: 4277576148911180122}
   audioSource: {fileID: 4277576149654627684}
@@ -278,7 +279,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0

@@ -9,6 +9,12 @@ ModelImporter:
   - first:
       74: 726223806253194669
     second: Cube.003|Cube.002Action.001
+  - first:
+      74: 6712369695479197947
+    second: Cube.002|Cube.002Action
+  - first:
+      74: 6188143692413826237
+    second: Cube.002|Cube.002Action.001
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -37,18 +43,18 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importCameras: 0
+    importLights: 0
     fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0
