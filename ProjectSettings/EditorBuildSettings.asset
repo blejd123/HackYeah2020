@@ -12,6 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Gameplay.unity
     guid: 73552cf256d94c5478ec966fbe912e85
   - enabled: 1
-    path: Assets/Scenes/ParticleTest2.unity
-    guid: b88878ea3f75d754789825f062d5ba98
+    path: Assets/Scenes/Gameplay City.unity
+    guid: 9310c6f5409fa6346bf783fa4268f554
   m_configObjects: {}
