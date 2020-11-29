@@ -44,6 +44,8 @@ GameObject:
   - component: {fileID: 2271848880586355263}
   - component: {fileID: 2271848880586355262}
   - component: {fileID: 8773277544683868989}
+  - component: {fileID: 7498951201736442481}
+  - component: {fileID: 4081270387038073888}
   m_Layer: 8
   m_Name: Staff
   m_TagString: Untagged
@@ -100,7 +102,7 @@ MonoBehaviour:
   particles: {fileID: 2092380294971705811, guid: 6f88466a0554b374ba4d5c5a1552fd90,
     type: 3}
   animator: {fileID: 8773277544683868989}
-  _hitSoundRange: 1.5
+  _hitSoundRange: 3
 --- !u!95 &8773277544683868989
 Animator:
   serializedVersion: 3
@@ -120,6 +122,35 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!54 &7498951201736442481
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2271848880586355248}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &4081270387038073888
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2271848880586355248}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.7, y: 2.72, z: 4.38}
+  m_Center: {x: 1.53, y: 0.86, z: 7.82}
 --- !u!1 &2271848881880079659
 GameObject:
   m_ObjectHideFlags: 0
@@ -271,6 +302,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 38.53801
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 560532a8b0696e940b7352c31f54f120,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7e75c7b387cedc549ac989c43bfb52e7, type: 2}
     - target: {fileID: 919132149155446097, guid: 560532a8b0696e940b7352c31f54f120,
         type: 3}
       propertyPath: m_Name
@@ -361,6 +397,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 14.599653
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: dddb494fffe061f4ca6a868c8f2f5209,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 06096f9bb167ca84cbd4b7ad703b9f27, type: 2}
     - target: {fileID: 919132149155446097, guid: dddb494fffe061f4ca6a868c8f2f5209,
         type: 3}
       propertyPath: m_Name

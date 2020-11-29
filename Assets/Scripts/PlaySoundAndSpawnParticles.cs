@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlaySoundAndSpawnParticles : MonoBehaviour
 {
     [SerializeField] private float _delay = 5.0f;
+    [SerializeField] private bool _randomizeStartDelay = false;
     [SerializeField] private float _duration = 2.0f;
     [SerializeField] private float _normalizedDensity = 1.0f;
     [SerializeField] private ParticleSpawner _particleSpawner;
@@ -20,6 +21,11 @@ public class PlaySoundAndSpawnParticles : MonoBehaviour
     {
         _audioSource.playOnAwake = false;
         _audioSource.loop = false;
+
+        if (_randomizeStartDelay)
+        {
+            yield return new WaitForSeconds(Random.Range(0.0f, _delay));
+        }
 
         while (true)
         {
