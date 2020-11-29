@@ -52,7 +52,7 @@ public class ParticleSpawner : MonoBehaviour
         //    pointCount = 1000;
         //}
         _pointCount = pointCount;
-        var m = transform.localToWorldMatrix;
+        var m = meshfilter.transform.localToWorldMatrix;
         Profiler.BeginSample("InitArrays");
         _points = new List<Vector3>(pointCount);
         _pointNormals = new List<Vector3>(pointCount);
