@@ -60,9 +60,10 @@ public class ParticleSpawner : MonoBehaviour
         Profiler.EndSample();
 
         Profiler.BeginSample("GetRandomPoints");
+        var points = meshData.GetRandomPointsOnSurface(pointCount, _colorOverride);
         for (int i = 0; i < pointCount; i++)
         {
-            var data = meshData.GetRandomPointOnSurface(_colorOverride);
+            var data = points[i];
             _points.Add(m.MultiplyPoint(data.Position));
             _pointNormals.Add(m.MultiplyVector(data.Normal).normalized);
             _pointColors.Add(data.Color);

@@ -16,6 +16,31 @@ public class ParticleSpawnerGlobalSettings : MonoBehaviour
         public Vector3[] Normals;
         public Color32[] Colors;
 
+        private List<PointData> _randomPoints = new List<PointData>();
+
+        public List<PointData> GetRandomPointsOnSurface(int count, Color32 colorOverride)
+        {
+            if (_randomPoints.Count < count)
+            {
+                var toAdd = count - _randomPoints.Count;
+                _randomPoints.Capacity = count;
+                for (int i = 0; i < toAdd; i++)
+                {
+                    _randomPoints.Add(GetRandomPointOnSurface(colorOverride));
+                }
+            }
+
+            if (Colors == null || Colors.Length == 0)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    _randomPoints[i].Color = colorOverride;
+                }
+            }
+            
+            return _randomPoints;
+        }
+
         public PointData GetRandomPointOnSurface(Color32 colorOverride)
         {
             int triangleIndex = 0;
