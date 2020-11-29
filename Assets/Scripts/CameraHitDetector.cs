@@ -19,7 +19,7 @@ public class CameraHitDetector : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit))
         {
-            HitDetectorUtilities.DetectHit(hit.point, _range);
+            HitDetectorUtilities.DetectHit(hit.point, _range, null);
         }
     }
 }

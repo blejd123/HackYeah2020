@@ -23,6 +23,8 @@
         [SerializeField] private InputController input;
 
         [SerializeField] private float _footstepSoundRange;
+        [SerializeField] private float _forwardOffset;
+        [SerializeField] private float _footstepSoundSpeed;
 
         private CharacterController controller;
 
@@ -33,6 +35,7 @@
         private float stepCycle;
         private float nextStep;
         private bool wasLeft;
+        private float _lastSoundTime;
 
         private void Start()
         {
@@ -128,7 +131,11 @@
             if (Physics.Raycast(position, Vector3.down, out raycastHit))
             {
                 OnFootstep?.Invoke(raycastHit.point);
-                HitDetectorUtilities.DetectHit(raycastHit.point, _footstepSoundRange);
+                if (Time.time > _lastSoundTime + 2.0f)
+                {
+                    _lastSoundTime = Time.time;
+                    HitDetectorUtilities.DetectHit(raycastHit.point + _forwardOffset * transform.forward, _footstepSoundRange, _footstepSoundSpeed);
+                }
             }
         }
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HitDetectorUtilities
 {
-    public static void DetectHit(Vector3 hitPoint, float range)
+    public static void DetectHit(Vector3 hitPoint, float range, float? waveSpeedOverride)
     {
         var hits = Physics.OverlapSphere(hitPoint, range);
         foreach (var hit in hits)
@@ -12,7 +12,7 @@ public class HitDetectorUtilities
             var spawner = hit.GetComponentInParent<ParticleSpawner>();
             if (spawner != null)
             {
-                spawner.Wave(hitPoint, range);
+                spawner.Wave(hitPoint, range, waveSpeedOverride);
             }
         }
     }

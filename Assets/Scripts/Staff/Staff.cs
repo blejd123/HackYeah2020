@@ -20,7 +20,7 @@
 
         private void OnCollisionEnter(Collision collision)
         {
-            HitDetectorUtilities.DetectHit(collision.GetContact(0).point, _hitSoundRange);
+            HitDetectorUtilities.DetectHit(collision.GetContact(0).point, _hitSoundRange, null);
         }
     }
 }
